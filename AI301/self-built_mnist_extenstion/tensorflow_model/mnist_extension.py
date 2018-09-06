@@ -13,6 +13,10 @@
 # limitations under the License.
 # ==============================================================================
 
+# Changelog:
+#   - Allow to import additional six categories of samples and labels.
+#
+
 """Simple, end-to-end, LeNet-5-like convolutional MNIST model example.
 
 This should achieve a test error of 0.7%. Please keep this model as simple and

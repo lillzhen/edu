@@ -228,7 +228,7 @@ class StrokeRecord
     private bool CheckPosition(StrokeRecord other)
     {
         return (other.HorizontalStart < OverlayMaxStart) || (OverlayMinEnd < other.HorizontalEnd);
-}
+    }
 
     /// <summary>
     /// 检查另一笔画是否和这一笔画重叠。
