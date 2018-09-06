@@ -12,67 +12,37 @@
 
 # 目录
 
->[概述](#概述)
->
->[流程](#流程)
->
->[语音转文本服务](#语音转文本服务)
->
->> [在线体验](#在线体验)
->> 
->> [申请试用](#申请试用)
->> 
->> [在Azure中申请使用](#在azure中申请使用)
->
->[语言理解服务](#语言理解服务)
->
->> [在线体验](#在线体验-1)
->> 
->> [基本术语](#基本术语)
->> 
->>> [LUIS应用程序](#luis应用程序)
->>> 
->>> [意图(Intent)](#意图intent)
->>> 
->>> [实体(Entity)](#实体entity)
->>> 
->>> [语句(Utterance)](#语句utterance)
->> 
->> [定制语言理解服务](#定制语言理解服务)
->> 
->>> [登录LUIS](#登录luis)
->>> 
->>> [创建LUIS应用](#创建luis应用)
->>> 
->>> [添加意图](#添加意图)
->>> 
->>> [添加实体](#添加实体)
->>> 
->>> [训练](#训练)
->>> 
->>> [测试](#测试)
->>> 
->>> [发布](#发布)
->>> 
->>> [迭代](#迭代)
->>> 
->>> [查看应用程序ID](#查看应用程序id)
->> 
->> [密钥管理](#密钥管理)
->> 
->>> [创作密钥](#创作密钥)
->>> 
->>> [终结点密钥](#终结点密钥)
->>> 
->>> [分配密钥](#分配密钥)
->
->[构建智能家居应用](#构建智能家居应用)
->
->> [界面设计](#界面设计)
->> 
->> [集成语音服务SDK和语言理解服务SDK](#集成语音服务sdk和语言理解服务sdk)
->
->[扩展和习题](#扩展和习题)
+- [概述](#概述)
+  - [流程](#流程)
+  - [语音转文本服务](#语音转文本服务)
+    - [在线体验](#在线体验)
+  - [申请试用](#申请试用)
+  - [在Azure中申请使用](#在azure中申请使用)
+- [语言理解服务](#语言理解服务)
+  - [在线体验](#在线体验-1)
+  - [基本术语](#基本术语)
+    - [LUIS应用程序](#luis应用程序)
+    - [意图(Intent)](#意图intent)
+    - [实体(Entity)](#实体entity)
+    - [语句(Utterance)](#语句utterance)
+  - [定制语言理解服务](#定制语言理解服务)
+    - [登录LUIS](#登录luis)
+    - [创建LUIS应用](#创建luis应用)
+    - [添加意图](#添加意图)
+    - [添加实体](#添加实体)
+    - [训练](#训练)
+    - [测试](#测试)
+    - [发布](#发布)
+    - [迭代](#迭代)
+    - [查看应用程序ID](#查看应用程序id)
+  - [密钥管理](#密钥管理)
+    - [创作密钥](#创作密钥)
+    - [终结点密钥](#终结点密钥)
+    - [分配密钥](#分配密钥)
+- [构建智能家居应用](#构建智能家居应用)
+  - [界面设计](#界面设计)
+  - [集成语音服务SDK和语言理解服务SDK](#集成语音服务sdk和语言理解服务sdk)
+- [扩展和习题](#扩展和习题)
 
 # 概述
 
@@ -416,7 +386,7 @@ Studio
 
 首先，在构造函数中，控件初始化完成后，让图片控件显示一张关闭着的灯的图片：
 
-```
+```C#
 public Form1()
 {
     InitializeComponent();
@@ -425,7 +395,7 @@ public Form1()
 ```
 
 然后，封装要用到的一些界面操作，例如，在右侧文本框中追加日志输出，模拟打开灯，关闭灯等：
-```
+```C#
 private void Log(string message, params string[] parameters)
 {
     MakesureRunInUI(() =>
@@ -489,7 +459,7 @@ private void MakesureRunInUI(Action action)
   - Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime
 
 然后回到Form1.cs的代码编辑页面，引用命名空间
-```
+```C#
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
 ```
@@ -498,7 +468,7 @@ using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
 
 本文前面申请到的语音服务的30天试用密钥是`6d04e77c6c6f4a02a9cf942f6419ffaf`，区域是`westus`。前面定制的LUIS应用程序的ID是`130e348f-d131-41d1-96b2-a29d42cc1d96`，密钥这里示例先用创作者密钥`58c57e08c8d540a4aa2196588eb69f8a`，终结点字符串比较长，但是LUIS
 SDK中只需配置到域名即可，不需要后面的路径，所以这里的终结点是`https://westus.api.cognitive.microsoft.com`
-```
+```C#
 // 设置语音服务密钥及区域
 const string speechKey = "6d04e77c6c6f4a02a9cf942f6419ffaf";
 const string speechRegion = "westus";
@@ -514,7 +484,7 @@ const string luisAppId = "130e348f-d131-41d1-96b2-a29d42cc1d96";
 添加成员变量语音识别器和意图预测器，并在Form1\_Load函数中初始化，挂载对应的事件处理函数。
 
 Tips：Form1\_Load函数需通过在Form窗体设计界面直接双击窗体的标题栏来添加。
-```
+```C#
 // 语音识别器
 SpeechRecognizer recognizer;
 
@@ -556,7 +526,7 @@ private void Form1_Load(object sender, EventArgs e)
 然后补充完整几个事件处理函数
 
 语音转文本时会不断的接收到中间结果，这里把中间结果输出到日志窗口中
-```
+```C#
 // 识别过程中的中间结果
 private void Recognizer_IntermediateResultReceived(object sender, SpeechRecognitionResultEventArgs e)
 {
@@ -568,7 +538,7 @@ private void Recognizer_IntermediateResultReceived(object sender, SpeechRecognit
 ```
 
 识别出现错误的时候，也把错误信息输出到日志窗口
-```
+```C#
 // 出错时的处理
 private void Recognizer_RecognitionErrorRaised(object sender, RecognitionErrorEventArgs e)
 {
@@ -577,7 +547,7 @@ private void Recognizer_RecognitionErrorRaised(object sender, RecognitionErrorEv
 ```
 
 静默几秒后，SDK会认为语音结束，此时返回语音转文本的最终结果。这里拿到结果后，在日志窗口中显示最终结果，并进一步处理文本结果
-```
+```C#
 // 获得音频分析后的文本内容
 private void Recognizer_FinalResultReceived(object sender, SpeechRecognitionResultEventArgs e)
 {
@@ -590,7 +560,7 @@ private void Recognizer_FinalResultReceived(object sender, SpeechRecognitionResu
 ```
 
 添加处理文本的函数，这里从文本中获取意图，然后根据意图的值，来执行开灯或关灯操作
-```
+```C#
 private async void ProcessSttResultAsync(string text)
 {
     // 调用语言理解服务取得用户意图
@@ -612,7 +582,7 @@ private async void ProcessSttResultAsync(string text)
 ```
 
 然后，添加对LUIS SDK的调用，可以从文本中获取意图
-```
+```C#
 private async Task<string> GetIntentAsync(string text)
 {
     try
