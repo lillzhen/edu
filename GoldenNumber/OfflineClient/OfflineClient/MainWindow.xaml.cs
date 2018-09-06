@@ -98,11 +98,11 @@ namespace OfflineClient
                 maxTime = maxTime < br.ElapsedTime ? br.ElapsedTime : maxTime;
 
                 int? score = scores.Last();
-                int ranking = scores.Select((s, idx) => new { Score = s, Index = idx }) // 绑定得分和序号（从0开始）。我们只用唯一序号来标识参加者，而不用可能重复的得分数。
-                    .OrderByDescending(si => si.Score) // 先按得分排序
-                    .Select((si, orderingIdx) => new { SI = si, OrderingIdx = orderingIdx }) // 按排序后的顺序再赋予一次序号（从0开始）
-                    .First(orderedSi => orderedSi.SI.Index == scores.Length - 1) // 找到序号是最大值的数据块，也即当前玩家的。
-                    .OrderingIdx + 1; // 排序后的序号 + 1，就是当前玩家的排名（从1开始）。
+                int ranking = scores.Select((s, idx) => new { Score = s, PlayerIndex = idx }) // 绑定得分和序号（从0开始）。我们只用唯一序号来标识参加者，而不用可能重复的得分数。
+                    .OrderByDescending(playerScore => playerScore.Score) // 先按得分排序
+                    .Select((playerScore, rankingIdx) => new { PlayerScore = playerScore, RankingIdx = rankingIdx }) // 按排序后的顺序再赋予一次序号（从0开始）
+                    .First(orderedSi => orderedSi.PlayerScore.PlayerIndex == scores.Length - 1) // 找到玩家序号是最大值的数据块，就是当前玩家的。
+                    .RankingIdx + 1; // 当前玩家的排序后序号 + 1，就是当前玩家的排名（从1开始）。
 
                 NearestText.Text = $"{nearestCount}/{i + 1}";
                 FarthestText.Text = $"{farthestCount}/{i + 1}";
@@ -123,6 +123,8 @@ namespace OfflineClient
             return 0 < num && num < 100;
         }
 
+        // 要求返回 Tuple<double, double>，是为了以类型约束可能的返回值。
+        // 但是转换成 IEnumerable<double>，会方便后续逻辑的处理。
         private static IEnumerable<double> YieldFromTuple(Tuple<double, double> t)
         {
             yield return t.Item1;
